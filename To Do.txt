@@ -1,0 +1,4 @@
+1. Progress tracking by individual team member
+2. Once first hardware/software is added, the category is categorized.
+   Then when adding new category it should have a drop down list, of the 
+   previous category then a new option for add new option then they can place the new option.

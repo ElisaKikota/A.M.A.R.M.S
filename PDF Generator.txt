@@ -1,0 +1,7 @@
+generate a ProjectDocumentation.md file containing the organized content of your project.
+
+=> node generate-doc.js
+
+
+pandoc ProjectDocumentation.md -o ProjectDocumentation.pdf
+
