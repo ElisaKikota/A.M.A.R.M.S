@@ -349,7 +349,7 @@ const HardwareSection = () => {
             <option value="maintenance">Maintenance</option>
           </select>
         </div>
-        {hasPermission('canManageResources') && (
+        {hasPermission('resources.addHardware') && (
           <button
             onClick={() => {
               setSelectedHardware(null);
@@ -426,7 +426,7 @@ const HardwareSection = () => {
                     <p className="text-xs text-gray-500 truncate">{item.category}</p>
                     <p className="text-xs text-gray-500 truncate">Made by: {item.company}</p>
                   </div>
-                  {hasPermission('canManageResources') && (
+                  {hasPermission('resources.addHardware') && (
                     <div className="flex gap-1 ml-2 flex-shrink-0">
                       <button
                         onClick={() => {

@@ -212,15 +212,29 @@ const defaultRoles = [
     description: 'Manages hardware, software and venue resources',
     isSystem: true,
     permissions: {
+      // Dashboard permissions
       'dashboard.view': true,
+      
+      // Projects permissions
+      'projects.view': true,
+      
+      // Resources permissions
       'resources.view': true,
       'resources.addHardware': true,
       'resources.addSoftware': true,
       'resources.book': true,
       'resources.editQuantity': true,
+      'resources.manageHardware': true,
+      'resources.manageSoftware': true,
+      
+      // Reports permissions
       'reports.view': true,
+      
+      // Tasks permissions
       'tasks.view': true,
       'tasks.complete': true,
+      
+      // Calendar permissions
       'calendar.view': true,
       'calendar.create': true
     }

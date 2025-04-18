@@ -1,66 +1,71 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Filter, Search, Plus, ChevronDown } from 'react-feather';
+import CampaignForm from '../components/CampaignForm';
+import { useFirebase } from '../contexts/FirebaseContext';
+import { firebaseDb } from '../services/firebaseDb';
+import { useProjectStore } from '../stores/projectsSlice';
+import { toast } from 'react-hot-toast';
 
 const MarketingPage = () => {
+  const { user } = useFirebase();
+  const projects = useProjectStore(state => state.projects);
+  const setProjects = useProjectStore(state => state.setProjects);
+  
   const [activeTab, setActiveTab] = useState('overview');
   const [searchQuery, setSearchQuery] = useState('');
+  const [showCampaignForm, setShowCampaignForm] = useState(false);
+  const [campaigns, setCampaigns] = useState([]);
+  const [setLoading] = useState(true);
+  const [setError] = useState(null);
 
-  // Mock data for demonstration
-  const projects = [
-    {
-      id: 1,
-      name: 'Website Redesign',
-      status: 'active',
-      budget: 50000,
-      spent: 35000,
-      campaigns: 3,
-      teamSize: 5,
-      nextMilestone: '2024-03-15'
-    },
-    {
-      id: 2,
-      name: 'Product Launch',
-      status: 'upcoming',
-      budget: 75000,
-      spent: 0,
-      campaigns: 0,
-      teamSize: 8,
-      nextMilestone: '2024-04-01'
-    },
-    {
-      id: 3,
-      name: 'Brand Awareness',
-      status: 'completed',
-      budget: 100000,
-      spent: 95000,
-      campaigns: 5,
-      teamSize: 6,
-      nextMilestone: '2024-02-28'
-    }
-  ];
+  useEffect(() => {
+    let isMounted = true;
 
-  const campaigns = [
-    {
-      id: 1,
-      name: 'Social Media Blitz',
-      project: 'Website Redesign',
-      startDate: '2024-03-01',
-      endDate: '2024-03-15',
-      budget: 15000,
-      spent: 12000,
-      status: 'active'
-    },
-    {
-      id: 2,
-      name: 'Email Campaign',
-      project: 'Website Redesign',
-      startDate: '2024-03-10',
-      endDate: '2024-03-20',
-      budget: 10000,
-      spent: 5000,
-      status: 'upcoming'
-    }
-  ];
+    const fetchProjects = async () => {
+      if (!user) return;
+      
+      try {
+        setLoading(true);
+        setError(null);
+        const projectsData = await firebaseDb.getProjects(user.uid);
+        if (isMounted) {
+          setProjects(projectsData);
+        }
+      } catch (error) {
+        console.error('Error fetching projects:', error);
+        if (isMounted) {
+          setError('Failed to load projects. Please try again.');
+          toast.error('Failed to load projects');
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchProjects();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [user, setProjects, setLoading, setError]);
+
+  const handleCreateCampaign = (campaignData) => {
+    const newCampaign = {
+      id: campaigns.length + 1,
+      ...campaignData,
+      project: campaignData.isProjectLinked ? campaignData.projectName : null,
+      budget: 0,
+      spent: 0
+    };
+    setCampaigns([...campaigns, newCampaign]);
+    setShowCampaignForm(false);
+  };
+
+  const handleNewCampaignClick = () => {
+    setShowCampaignForm(true);
+  };
 
   return (
     <div className="p-6">
@@ -136,10 +141,6 @@ const MarketingPage = () => {
             <ChevronDown size={16} className="ml-2" />
           </button>
         </div>
-        <button className="flex items-center px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
-          <Plus size={16} className="mr-2" />
-          New Campaign
-        </button>
       </div>
 
       {/* Content based on active tab */}
@@ -172,8 +173,8 @@ const MarketingPage = () => {
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">${project.budget.toLocaleString()}</div>
-                    <div className="text-sm text-gray-500">Spent: ${project.spent.toLocaleString()}</div>
+                    <div className="text-sm text-gray-900">${(project.budget || 0).toLocaleString()}</div>
+                    <div className="text-sm text-gray-500">Spent: ${(project.spent || 0).toLocaleString()}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{project.campaigns}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{project.teamSize}</td>
@@ -186,33 +187,96 @@ const MarketingPage = () => {
       )}
 
       {activeTab === 'campaigns' && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {campaigns.map((campaign) => (
-            <div key={campaign.id} className="bg-white rounded-lg shadow p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-gray-800">{campaign.name}</h3>
-                <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
-                  campaign.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-                }`}>
-                  {campaign.status}
-                </span>
+        <div>
+          <div className="flex justify-end mb-6">
+            <button 
+              onClick={handleNewCampaignClick}
+              className="flex items-center px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+            >
+              <Plus size={16} className="mr-2" />
+              New Campaign
+            </button>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {campaigns.map((campaign) => (
+              <div key={campaign.id} className="bg-white rounded-lg shadow p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-gray-800">{campaign.name}</h3>
+                  <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
+                    campaign.status === 'active' ? 'bg-green-100 text-green-800' :
+                    campaign.status === 'upcoming' ? 'bg-yellow-100 text-yellow-800' :
+                    campaign.status === 'completed' ? 'bg-blue-100 text-blue-800' :
+                    'bg-gray-100 text-gray-800'
+                  }`}>
+                    {campaign.status}
+                  </span>
+                </div>
+                <div className="space-y-4">
+                  <div>
+                    <p className="text-sm text-gray-500">Project</p>
+                    <p className="text-sm font-medium">{campaign.project}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Goal</p>
+                    <p className="text-sm font-medium">{campaign.goal}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Timeline</p>
+                    <p className="text-sm font-medium">{campaign.startDate} - {campaign.endDate}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Theme/Message</p>
+                    <p className="text-sm font-medium">{campaign.theme}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Target Audience</p>
+                    <p className="text-sm font-medium">{campaign.targetAudience}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Channels</p>
+                    <div className="flex flex-wrap gap-2 mt-1">
+                      {campaign.channels.map((channel, index) => (
+                        <span key={index} className="px-2 py-1 bg-gray-100 text-gray-700 rounded-full text-xs">
+                          {channel}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Tasks</p>
+                    <div className="mt-2 space-y-2">
+                      {campaign.tasks.map((task, index) => (
+                        <div key={index} className="flex items-center justify-between text-sm">
+                          <span className="font-medium">{task.title}</span>
+                          <div className="flex items-center space-x-2">
+                            <span className="text-gray-500">{task.assignedTo}</span>
+                            <span className={`px-2 py-1 text-xs rounded-full ${
+                              task.status === 'completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                            }`}>
+                              {task.status}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Budget</p>
+                    <div className="flex justify-between items-center">
+                      <p className="text-sm font-medium">${campaign.budget.toLocaleString()}</p>
+                      <p className="text-sm text-gray-500">Spent: ${campaign.spent.toLocaleString()}</p>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2 mt-1">
+                      <div 
+                        className="bg-blue-500 h-2 rounded-full" 
+                        style={{ width: `${(campaign.spent / campaign.budget) * 100}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div className="space-y-3">
-                <div>
-                  <p className="text-sm text-gray-500">Project</p>
-                  <p className="text-sm font-medium">{campaign.project}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Timeline</p>
-                  <p className="text-sm font-medium">{campaign.startDate} - {campaign.endDate}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Budget</p>
-                  <p className="text-sm font-medium">${campaign.budget.toLocaleString()} (${campaign.spent.toLocaleString()} spent)</p>
-                </div>
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       )}
 
@@ -282,6 +346,14 @@ const MarketingPage = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {showCampaignForm && (
+        <CampaignForm
+          projects={projects}
+          onClose={() => setShowCampaignForm(false)}
+          onSave={handleCreateCampaign}
+        />
       )}
     </div>
   );

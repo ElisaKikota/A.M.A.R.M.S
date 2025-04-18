@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Search, X, Upload } from 'lucide-react';
+import { Plus, Search, X, Upload} from 'lucide-react';
 import { useFirebase } from '../../contexts/FirebaseContext';
 import { useAuth } from '../../contexts/AuthContext';
 import { toast } from 'react-hot-toast';
@@ -212,10 +212,24 @@ const SoftwareSection = () => {
           <option value="in-use">In Use</option>
           <option value="expired">Expired</option>
         </select>
-        {hasPermission('canManageResources') && (
+        {hasPermission('resources.addSoftware') && (
           <button
-            onClick={() => setIsModalOpen(true)}
-            className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+            onClick={() => {
+              setSelectedSoftware(null);
+              setFormData({
+                name: '',
+                category: '',
+                company: '',
+                description: '',
+                licenseType: '',
+                licenseCount: 0,
+                expiryDate: '',
+                images: []
+              });
+              setImages([]);
+              setIsModalOpen(true);
+            }}
+            className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 whitespace-nowrap"
           >
             <Plus size={20} />
             Add Software
@@ -257,7 +271,7 @@ const SoftwareSection = () => {
                 </div>
               )}
 
-              {hasPermission('canManageResources') && (
+              {hasPermission('resources.addSoftware') && (
                 <div className="pt-2 border-t flex justify-end gap-2">
                   <button
                     onClick={() => handleUpdateSoftware(item)}
