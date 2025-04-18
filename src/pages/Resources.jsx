@@ -9,11 +9,6 @@ import { VenueBookingModal } from '../components/resources/modals/VenueBookingMo
 import { toast } from 'react-hot-toast';
 import { resourceService } from '../services/resourceService';
 
-
-
-
-
-
 const Resources = () => {
   const { user } = useFirebase();
   const [activeTab, setActiveTab] = useState('venues');

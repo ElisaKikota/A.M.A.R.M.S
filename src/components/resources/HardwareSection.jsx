@@ -349,7 +349,7 @@ const HardwareSection = () => {
             <option value="maintenance">Maintenance</option>
           </select>
         </div>
-        {hasPermission('resources.addHardware') && (
+        {hasPermission('resources.view') && (
           <button
             onClick={() => {
               setSelectedHardware(null);
