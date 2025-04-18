@@ -19,6 +19,9 @@ import Login from './pages/Login';
 import SignUp from './pages/SignUp';
 import PermissionsControl from './pages/PermissionsControl';
 import Calendar from './pages/Calendar';
+import MarketingPage from './pages/MarketingPage';
+import PRPage from './pages/PRPage';
+import GraphicsPage from './pages/GraphicsPage';
 
 function App() {
   return (
@@ -74,6 +77,27 @@ function App() {
                 <Route path="reports" element={
                   <ProtectedRoute requiredPermission="reports.view">
                     <Reports />
+                  </ProtectedRoute>
+                } />
+                
+                {/* Marketing - Requires marketing.view permission */}
+                <Route path="marketing" element={
+                  <ProtectedRoute requiredPermission="marketing.view">
+                    <MarketingPage />
+                  </ProtectedRoute>
+                } />
+                
+                {/* PR - Requires pr.view permission */}
+                <Route path="pr" element={
+                  <ProtectedRoute requiredPermission="pr.view">
+                    <PRPage />
+                  </ProtectedRoute>
+                } />
+                
+                {/* Graphics - Requires graphics.view permission */}
+                <Route path="graphics" element={
+                  <ProtectedRoute requiredPermission="graphics.view">
+                    <GraphicsPage />
                   </ProtectedRoute>
                 } />
                 

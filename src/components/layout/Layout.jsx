@@ -14,7 +14,9 @@ import {
   UserCheck, 
   Shield,
   CheckSquare,
-  Calendar as CalendarIcon
+  Calendar as CalendarIcon,
+  FileText,
+  Image as ImageIcon
 } from 'lucide-react';
 import { Link, useLocation, Outlet, useNavigate } from 'react-router-dom';
 import { useFirebase } from '../../contexts/FirebaseContext';
@@ -60,6 +62,24 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
       permission: 'resources.view' 
     },
     { 
+      icon: BarChart, 
+      label: 'Marketing', 
+      path: '/marketing',
+      permission: 'marketing.view' 
+    },
+    { 
+      icon: FileText, 
+      label: 'PR', 
+      path: '/pr',
+      permission: 'pr.view' 
+    },
+    { 
+      icon: ImageIcon, 
+      label: 'Graphics', 
+      path: '/graphics',
+      permission: 'graphics.view' 
+    },
+    { 
       icon: CalendarIcon, 
       label: 'Calendar', 
       path: '/calendar',
@@ -88,7 +108,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
       label: 'Permissions', 
       path: '/permissions',
       permission: 'admin.managePermissions' 
-    }
+    },
   ];
 
   // Filter menu items based on permissions
@@ -217,6 +237,7 @@ const Header = ({ isCollapsed, setIsCollapsed }) => {
       case '/resources': return 'Resources';
       case '/member-approvals': return 'Member Approvals';
       case '/permissions': return 'Permissions';
+      case '/marketing': return 'Marketing';
       default: return 'Dashboard';
     }
   };

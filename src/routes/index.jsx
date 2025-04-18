@@ -1,4 +1,5 @@
 import { createBrowserRouter } from 'react-router-dom';
+import MarketingPage from '../pages/MarketingPage';
 
 export const router = createBrowserRouter([
   {
@@ -30,6 +31,10 @@ export const router = createBrowserRouter([
       {
         path: 'analytics',
         element: <AnalyticsDashboard />
+      },
+      {
+        path: 'marketing',
+        element: <MarketingPage />
       }
     ]
   }

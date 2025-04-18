@@ -46,7 +46,21 @@ const defaultRoles = [
       'calendar.delete': true,
       'admin.approveMembers': true,
       'admin.managePermissions': true,
-      'admin.viewSystemLogs': true
+      'admin.viewSystemLogs': true,
+      'marketing.view': true,
+      'marketing.createCampaign': true,
+      'marketing.editCampaign': true,
+      'marketing.createContent': true,
+      'marketing.editContent': true,
+      'marketing.viewAnalytics': true,
+      'pr.view': true,
+      'pr.createPressRelease': true,
+      'pr.editPressRelease': true,
+      'pr.publishPressRelease': true,
+      'pr.manageEvents': true,
+      'pr.manageMediaContacts': true,
+      'pr.viewAnalytics': true,
+      'pr.manageCrisis': true
     }
   },
   {
@@ -131,7 +145,11 @@ const defaultRoles = [
       'calendar.view': true,
       'calendar.create': true,
       'calendar.edit': true,
-      'admin.approveMembers': true
+      'admin.approveMembers': true,
+      'marketing.view': true,
+      'marketing.viewAnalytics': true,
+      'pr.view': true,
+      'pr.viewAnalytics': true
     }
   },
   {
@@ -149,7 +167,19 @@ const defaultRoles = [
       'tasks.view': true,
       'tasks.complete': true,
       'calendar.view': true,
-      'calendar.create': true
+      'calendar.create': true,
+      'marketing.view': true,
+      'marketing.createContent': true,
+      'marketing.editContent': true,
+      'marketing.viewAnalytics': true,
+      'pr.view': true,
+      'pr.createPressRelease': true,
+      'pr.editPressRelease': true,
+      'pr.publishPressRelease': true,
+      'pr.manageEvents': true,
+      'pr.manageMediaContacts': true,
+      'pr.viewAnalytics': true,
+      'pr.manageCrisis': true
     }
   },
   {
@@ -167,7 +197,13 @@ const defaultRoles = [
       'tasks.view': true,
       'tasks.complete': true,
       'calendar.view': true,
-      'calendar.create': true
+      'calendar.create': true,
+      'marketing.view': true,
+      'marketing.createCampaign': true,
+      'marketing.editCampaign': true,
+      'marketing.createContent': true,
+      'marketing.editContent': true,
+      'marketing.viewAnalytics': true
     }
   },
   {
