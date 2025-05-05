@@ -23,6 +23,15 @@ import { useFirebase } from '../../contexts/FirebaseContext';
 import { useAuth } from '../../contexts/AuthContext'; // Add useAuth import
 import { useActivityLog } from '../../contexts/ActivityLogContext'; // Add ActivityLog import
 import { toast } from 'react-hot-toast';
+import { Helmet } from 'react-helmet';
+
+const PageTitle = ({ title }) => {
+  return (
+    <Helmet>
+      <title>{title} | A.M.A.R.M.S</title>
+    </Helmet>
+  );
+};
 
 const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
   const location = useLocation();
@@ -238,6 +247,9 @@ const Header = ({ isCollapsed, setIsCollapsed }) => {
       case '/member-approvals': return 'Member Approvals';
       case '/permissions': return 'Permissions';
       case '/marketing': return 'Marketing';
+      case '/pr': return 'Public Relations';
+      case '/graphics': return 'Graphics';
+      case '/calendar': return 'Calendar';
       default: return 'Dashboard';
     }
   };
@@ -323,8 +335,28 @@ const Layout = () => {
     );
   }
 
+  const getPageTitle = (pathname) => {
+    switch (pathname) {
+      case '/': return 'Dashboard';
+      case '/projects': return 'Projects';
+      case '/tasks': return 'My Tasks';
+      case '/team': return 'Team Management';
+      case '/reports': return 'Reports';
+      case '/settings': return 'Settings';
+      case '/resources': return 'Resources';
+      case '/member-approvals': return 'Member Approvals';
+      case '/permissions': return 'Permissions';
+      case '/marketing': return 'Marketing';
+      case '/pr': return 'Public Relations';
+      case '/graphics': return 'Graphics';
+      case '/calendar': return 'Calendar';
+      default: return 'Dashboard';
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-100">
+      <PageTitle title={getPageTitle(location.pathname)} />
       <Header isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
       <Sidebar isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
       <main 
