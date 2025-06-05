@@ -191,6 +191,7 @@ const KanbanBoard = ({ projectId, currentUser, onMilestoneUpdate }) => {
       if (currentTask) {
         const updatedTask = await firebaseDb.updateTask(projectId, currentTask.id, {
           ...taskData,
+          milestoneId: currentTask.milestoneId,
           updatedAt: new Date().toISOString()
         });
 
