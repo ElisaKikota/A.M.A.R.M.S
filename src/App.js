@@ -22,6 +22,8 @@ import Calendar from './pages/Calendar';
 import MarketingPage from './pages/MarketingPage';
 import PRPage from './pages/PRPage';
 import GraphicsPage from './pages/GraphicsPage';
+import Clients from './pages/Clients';
+import Competitions from './pages/Competitions';
 
 function App() {
   return (
@@ -122,6 +124,20 @@ function App() {
                 <Route path="permissions" element={
                   <ProtectedRoute requiredPermission="admin.managePermissions">
                     <PermissionsControl />
+                  </ProtectedRoute>
+                } />
+                
+                {/* Clients - Requires clients.view permission */}
+                <Route path="clients" element={
+                  <ProtectedRoute requiredPermission="clients.view">
+                    <Clients />
+                  </ProtectedRoute>
+                } />
+                
+                {/* Competitions - Requires competitions.view permission */}
+                <Route path="competitions" element={
+                  <ProtectedRoute requiredPermission="competitions.view">
+                    <Competitions />
                   </ProtectedRoute>
                 } />
               </Route>

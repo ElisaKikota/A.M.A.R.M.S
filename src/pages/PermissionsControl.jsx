@@ -94,6 +94,23 @@ const PermissionsControl = () => {
         { id: 'admin.managePermissions', label: 'Manage Permissions', description: 'Manage role permissions' },
         { id: 'admin.viewSystemLogs', label: 'View System Logs', description: 'Access system logs and activity' }
       ]
+    },
+    {
+      page: 'Clients',
+      permissions: [
+        { id: 'clients.view', label: 'View Clients', description: 'Access the clients page' }
+      ]
+    },
+    {
+      page: 'Competitions',
+      permissions: [
+        { id: 'competitions.view', label: 'View Competitions', description: 'Access the competitions page' },
+        { id: 'competitions.create', label: 'Create Competitions', description: 'Create new competitions' },
+        { id: 'competitions.edit', label: 'Edit Competitions', description: 'Edit existing competitions' },
+        { id: 'competitions.delete', label: 'Delete Competitions', description: 'Delete competitions' },
+        { id: 'competitions.manageApplications', label: 'Manage Applications', description: 'Create and manage competition applications' },
+        { id: 'competitions.viewAnalytics', label: 'View Analytics', description: 'View competition analytics and metrics' }
+      ]
     }
   ];
 

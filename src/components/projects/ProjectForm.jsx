@@ -1,5 +1,5 @@
 import React from 'react';
-import { useProjectStore } from '../../stores/projectStore';
+import { useProjectStore } from '../../stores/projectsSlice';
 
 export default function ProjectForm({ onSubmit }) {
   const addProject = useProjectStore(state => state.addProject);

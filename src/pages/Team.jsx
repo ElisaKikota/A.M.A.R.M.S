@@ -57,7 +57,9 @@ const Team = () => {
             activity: getUserActivity(userData),
             projects: [] // Will be populated with project assignments
           };
-        });
+        })
+        // Exclude users with the 'client' role
+        .filter(member => member.role !== 'client');
 
         // Load projects to check team assignments
         const projects = await firebaseDb.getProjects(user.uid);

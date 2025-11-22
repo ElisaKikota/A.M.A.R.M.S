@@ -60,7 +60,13 @@ const defaultRoles = [
       'pr.manageEvents': true,
       'pr.manageMediaContacts': true,
       'pr.viewAnalytics': true,
-      'pr.manageCrisis': true
+      'pr.manageCrisis': true,
+      'competitions.view': true,
+      'competitions.create': true,
+      'competitions.edit': true,
+      'competitions.delete': true,
+      'competitions.manageApplications': true,
+      'competitions.viewAnalytics': true
     }
   },
   {
@@ -115,7 +121,14 @@ const defaultRoles = [
       
       // Admin permissions
       'admin.approveMembers': true,
-      'admin.viewSystemLogs': true
+      'admin.viewSystemLogs': true,
+      
+      // Competition permissions
+      'competitions.view': true,
+      'competitions.create': true,
+      'competitions.edit': true,
+      'competitions.manageApplications': true,
+      'competitions.viewAnalytics': true
     }
   },
   {
@@ -149,7 +162,14 @@ const defaultRoles = [
       'marketing.view': true,
       'marketing.viewAnalytics': true,
       'pr.view': true,
-      'pr.viewAnalytics': true
+      'pr.viewAnalytics': true,
+      
+      // Competition permissions
+      'competitions.view': true,
+      'competitions.create': true,
+      'competitions.edit': true,
+      'competitions.manageApplications': true,
+      'competitions.viewAnalytics': true
     }
   },
   {
@@ -276,7 +296,14 @@ const defaultRoles = [
       'tasks.viewAll': true,
       'calendar.view': true,
       'calendar.create': true,
-      'calendar.edit': true
+      'calendar.edit': true,
+      
+      // Competition permissions
+      'competitions.view': true,
+      'competitions.create': true,
+      'competitions.edit': true,
+      'competitions.manageApplications': true,
+      'competitions.viewAnalytics': true
     }
   },
   {
@@ -300,6 +327,18 @@ const defaultRoles = [
       'calendar.view': true,
       'calendar.create': true,
       'admin.viewSystemLogs': true
+    }
+  },
+  {
+    id: 'client',
+    name: 'Client',
+    description: 'Client access to view and track their projects',
+    isSystem: true,
+    permissions: {
+      'dashboard.view': true,
+      'projects.view': true,
+      // Settings page is usually open to all, but if you have a permission, add it here:
+      // 'settings.view': true
     }
   }
 ];

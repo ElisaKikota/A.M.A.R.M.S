@@ -16,7 +16,8 @@ import {
   CheckSquare,
   Calendar as CalendarIcon,
   FileText,
-  Image as ImageIcon
+  Image as ImageIcon,
+  Trophy
 } from 'lucide-react';
 import { Link, useLocation, Outlet, useNavigate } from 'react-router-dom';
 import { useFirebase } from '../../contexts/FirebaseContext';
@@ -37,6 +38,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
   const location = useLocation();
   
   const { hasPermission } = useAuth();
+  const { user } = useFirebase();
   
   // Define menu items with required permissions
   const menuItems = [
@@ -52,6 +54,13 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
       path: '/projects',
       permission: 'projects.view' 
     },
+    // Clients for admin only, directly below Projects
+    ...(hasPermission('clients.view') && user?.role === 'admin' ? [{
+      icon: Shield,
+      label: 'Clients',
+      path: '/clients',
+      permission: 'clients.view'
+    }] : []),
     { 
       icon: CheckSquare, 
       label: 'My Tasks', 
@@ -117,6 +126,12 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
       label: 'Permissions', 
       path: '/permissions',
       permission: 'admin.managePermissions' 
+    },
+    { 
+      icon: Trophy, 
+      label: 'Competitions', 
+      path: '/competitions',
+      permission: 'competitions.view' 
     },
   ];
 
@@ -250,6 +265,7 @@ const Header = ({ isCollapsed, setIsCollapsed }) => {
       case '/pr': return 'Public Relations';
       case '/graphics': return 'Graphics';
       case '/calendar': return 'Calendar';
+      case '/competitions': return 'Competitions';
       default: return 'Dashboard';
     }
   };
@@ -350,6 +366,7 @@ const Layout = () => {
       case '/pr': return 'Public Relations';
       case '/graphics': return 'Graphics';
       case '/calendar': return 'Calendar';
+      case '/competitions': return 'Competitions';
       default: return 'Dashboard';
     }
   };

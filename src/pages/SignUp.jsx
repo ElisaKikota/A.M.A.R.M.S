@@ -33,6 +33,11 @@ const SignUp = () => {
       description: 'Full system access with all permissions (requires authorization code)'
     },
     {
+      id: 'client',
+      name: 'Client',
+      description: 'Client access to view and track your projects (requires authorization code)'
+    },
+    {
       id: 'hod',
       name: 'Head of Department',
       description: 'Department-level oversight and management (requires approval)'
@@ -77,13 +82,13 @@ const SignUp = () => {
   const handleRoleChange = (e) => {
     const newRole = e.target.value;
     setFormData({ ...formData, role: newRole });
-    // Show auth code for admin role only
-    setShowAuthCode(newRole === 'admin');
+    // Show auth code for admin or client role only
+    setShowAuthCode(newRole === 'admin' || newRole === 'client');
   };
 
   // Initialize showAuthCode based on initial role
   useEffect(() => {
-    setShowAuthCode(formData.role === 'admin');
+    setShowAuthCode(formData.role === 'admin' || formData.role === 'client');
   }, [formData.role]);
 
   const handleSubmit = async (e) => {
@@ -130,6 +135,23 @@ const SignUp = () => {
           status: 'active'
         });
         toast.success('Admin account created successfully!');
+      } else if (formData.role === 'client') {
+        // Verify auth code for client role
+        const authRef = doc(db, 'authorization', 'client');
+        const authDoc = await getDoc(authRef);
+
+        if (!authDoc.exists() || authDoc.data().code !== formData.authCode) {
+          await userCredential.user.delete();
+          toast.error('Invalid authorization code');
+          return;
+        }
+
+        // Create client user document with active status
+        await setDoc(doc(db, 'users', userCredential.user.uid), {
+          ...userData,
+          status: 'active'
+        });
+        toast.success('Client account created successfully!');
       } else if (['supervisor', 'leader', 'hod', 'developer'].includes(formData.role)) {
         // Add to approval collection for roles requiring approval
         await setDoc(doc(db, 'usersWaitingApproval', userCredential.user.uid), {

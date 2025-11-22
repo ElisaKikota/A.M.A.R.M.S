@@ -1123,6 +1123,38 @@ export const firebaseDb = {
     }
   },
 
+  // Get projects assigned to a client
+  async getClientProjects(clientId) {
+    try {
+      if (!clientId) {
+        console.warn('No clientId provided to getClientProjects');
+        return [];
+      }
+
+      const projectsRef = collection(db, 'projects');
+      const q = query(projectsRef, where('clientId', '==', clientId));
+      const snapshot = await getDocs(q);
+      
+      const projects = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+        milestones: doc.data().milestones || [],
+        team: doc.data().team || [],
+        resources: doc.data().resources || []
+      }));
+
+      // Sync team members for each project
+      const syncedProjects = await Promise.all(
+        projects.map(project => this.syncProjectTeamMembers(project))
+      );
+      
+      return syncedProjects;
+    } catch (error) {
+      console.error('Error getting client projects:', error);
+      throw new Error('Failed to load client projects');
+    }
+  },
+
   // Task Evidence
   async addTaskEvidence(projectId, taskId, evidenceId) {
     try {
@@ -1682,6 +1714,21 @@ export const firebaseDb = {
     } catch (error) {
       console.error('Error getting bookings:', error);
       throw new Error('Failed to load bookings');
+    }
+  },
+
+  // Get all clients
+  async getClients() {
+    try {
+      const clientsRef = collection(db, 'clients');
+      const snapshot = await getDocs(clientsRef);
+      return snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+    } catch (error) {
+      console.error('Error loading clients:', error);
+      throw new Error('Failed to load clients');
     }
   },
 };

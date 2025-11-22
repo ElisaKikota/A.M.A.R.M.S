@@ -79,3 +79,51 @@ export interface TeamMember {
     teamPerformance: number;
     kpiAchievement: number;
   }
+
+  export interface Competition {
+    id: string;
+    name: string;
+    description: string;
+    fundingAmount: number;
+    currency: string;
+    organization: string;
+    applicationDeadline: Date;
+    requirements: string[];
+    status: 'open' | 'closed' | 'awarded';
+    eligibilityCriteria: string;
+    maxApplications?: number;
+    createdAt: Date;
+    updatedAt: Date;
+    createdBy: string;
+  }
+  
+  export interface CompetitionApplication {
+    id: string;
+    competitionId: string;
+    projectId: string;
+    status: 'draft' | 'submitted' | 'under_review' | 'awarded' | 'rejected';
+    submittedAt?: Date;
+    reviewedAt?: Date;
+    feedback?: string;
+    documents: ApplicationDocument[];
+    notes: string;
+    createdAt: Date;
+    updatedAt: Date;
+    createdBy: string;
+  }
+  
+  export interface ApplicationDocument {
+    id: string;
+    name: string;
+    type: 'proposal' | 'budget' | 'supporting' | 'other';
+    url: string;
+    uploadedAt: Date;
+  }
+  
+  export interface CompetitionMetrics {
+    totalApplications: number;
+    successRate: number;
+    totalFundingReceived: number;
+    activeCompetitions: number;
+    upcomingDeadlines: number;
+  }

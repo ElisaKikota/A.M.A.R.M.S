@@ -1,5 +1,13 @@
 import { createBrowserRouter } from 'react-router-dom';
+import Layout from '../components/layout/Layout';
+import Dashboard from '../pages/Dashboard';
+import Projects from '../pages/Projects';
+import ProjectDetails from '../pages/ProjectDetailsModal';
+import TeamManagement from '../pages/Team';
+import Resources from '../pages/Resources';
+import AnalyticsDashboard from '../components/analytics/AnalyticsDashboard';
 import MarketingPage from '../pages/MarketingPage';
+import Competitions from '../pages/Competitions';
 
 export const router = createBrowserRouter([
   {
@@ -35,6 +43,10 @@ export const router = createBrowserRouter([
       {
         path: 'marketing',
         element: <MarketingPage />
+      },
+      {
+        path: 'competitions',
+        element: <Competitions />
       }
     ]
   }

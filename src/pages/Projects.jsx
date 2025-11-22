@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Filter, User, UserPlus, Users } from 'lucide-react';
+import { Plus, Filter, User, UserPlus, Users, Building2 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import ProjectCard from '../components/projects/ProjectCard';
 import ProjectModal from '../components/projects/ProjectModal';
@@ -35,14 +35,34 @@ const Projects = () => {
   // Check if user is admin or supervisor
   const isAdminOrSupervisor = userRole === 'admin' || userRole === 'supervisor';
   
+  // Ownership options for the filter
+  const ownershipOptions =
+    userRole === 'client'
+      ? [
+          { value: 'client', label: 'My Projects', icon: Building2 }
+        ]
+      : [
+          { value: 'all', label: 'All Projects', icon: Users },
+          { value: 'owned', label: 'Managing', icon: User },
+          { value: 'member', label: 'Shared With Me', icon: UserPlus },
+          ...(userRole === 'client' ? [{ value: 'client', label: 'My Projects', icon: Building2 }] : [])
+        ];
+
+  // Set default ownership filter for client
+  useEffect(() => {
+    if (userRole === 'client') {
+      setOwnershipFilter('client');
+    }
+  }, [userRole]);
+
   // Convert projects object to array and filter by status and ownership
   const projectsArray = Object.values(projects).filter(project => {
     // Status filter
     const statusMatch = statusFilter === 'all' ? true : project.status === statusFilter;
     
-    // Ownership filter - only apply if user is not admin/supervisor or if they explicitly filter
+    // Ownership filter
     let ownershipMatch = true;
-    if (!isAdminOrSupervisor || ownershipFilter !== 'all') {
+    if (ownershipFilter !== 'all') {
       if (ownershipFilter === 'owned') {
         // "Managing" filter - show projects where user is the project manager
         ownershipMatch = project.projectManager === user?.uid;
@@ -51,6 +71,9 @@ const Projects = () => {
         ownershipMatch = project.projectManager !== user?.uid && 
                          project.team && 
                          project.team.some(member => member.id === user?.uid);
+      } else if (ownershipFilter === 'client') {
+        // "My Projects" filter - show projects assigned to the client
+        ownershipMatch = Array.isArray(project.clientIds) && project.clientIds.includes(user?.uid);
       }
     }
     
@@ -65,13 +88,6 @@ const Projects = () => {
     { value: 'onHold', label: 'On Hold' },
     { value: 'completed', label: 'Completed' },
     { value: 'cancelled', label: 'Cancelled' }
-  ];
-
-  // Ownership options for the filter
-  const ownershipOptions = [
-    { value: 'all', label: 'All Projects', icon: Users },
-    { value: 'owned', label: 'Managing', icon: User },
-    { value: 'member', label: 'Shared With Me', icon: UserPlus }
   ];
 
   useEffect(() => {
@@ -89,6 +105,9 @@ const Projects = () => {
         if (isAdminOrSupervisor) {
           // Admin and supervisor users can see all projects
           projectsData = await firebaseDb.getAllProjects();
+        } else if (userRole === 'client') {
+          // Client users only see their assigned projects
+          projectsData = await firebaseDb.getClientProjects(user.uid);
         } else {
           // Regular users only see their own projects and those they're members of
           projectsData = await firebaseDb.getAllUserProjects(user.uid);
@@ -115,7 +134,7 @@ const Projects = () => {
     return () => {
       isMounted = false;
     };
-  }, [user, setProjects, isAdminOrSupervisor]);
+  }, [user, setProjects, isAdminOrSupervisor, userRole]);
 
   // Handle loading state
   if (loading) {
@@ -227,6 +246,7 @@ const Projects = () => {
                   ? 'bg-blue-50 border-blue-200 text-blue-700' 
                   : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'
               }`}
+              disabled={userRole === 'client' && option.value !== 'client'}
             >
               <option.icon size={16} />
               {option.label}
