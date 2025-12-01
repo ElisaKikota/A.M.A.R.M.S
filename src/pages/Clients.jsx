@@ -4,14 +4,14 @@ import { toast } from 'react-hot-toast';
 import { useFirebase } from '../contexts/FirebaseContext';
 import { useAuth } from '../contexts/AuthContext';
 import LoadingOverlay from '../components/ui/LoadingOverlay';
-import { collection, query, where, getDocs, doc, updateDoc, addDoc, serverTimestamp, arrayUnion } from 'firebase/firestore';
+import { collection, query, where, getDocs, doc, updateDoc, arrayUnion } from 'firebase/firestore';
 import { db } from '../firebase/config';
 import Modal from '../components/shared/Modal';
 import { Tab } from '@headlessui/react';
 
 const Clients = () => {
   const { user } = useFirebase();
-  const { hasPermission, userRole } = useAuth();
+  const { hasPermission } = useAuth();
   const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -19,21 +19,13 @@ const Clients = () => {
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedClient, setSelectedClient] = useState(null);
   const [isClientModalOpen, setIsClientModalOpen] = useState(false);
-  const [availableProjects, setAvailableProjects] = useState([]);
-  const [selectedProjects, setSelectedProjects] = useState([]);
   const [projectMap, setProjectMap] = useState({});
-  const [chatClient] = useState(null);
-  const [isChatModalOpen] = useState(false);
-  const [newProjectName, setNewProjectName] = useState('');
-  const [newProjectDesc, setNewProjectDesc] = useState('');
-  const [isCreatingProject, setIsCreatingProject] = useState(false);
   const [unlinkedProjects, setUnlinkedProjects] = useState([]);
   const [selectedToLink, setSelectedToLink] = useState([]);
   const [isLinking, setIsLinking] = useState(false);
 
   // Check if user has permission to view clients
   const canViewClients = hasPermission('clients.view');
-  const isAdminOrSupervisor = userRole === 'admin' || userRole === 'supervisor';
 
   useEffect(() => {
     const loadClients = async () => {
@@ -114,58 +106,6 @@ const Clients = () => {
     return matchesSearch && matchesStatus;
   });
 
-  // Fetch unassigned projects when modal opens
-  const fetchAvailableProjects = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const projectsRef = collection(db, 'projects');
-      const snapshot = await getDocs(projectsRef);
-      setAvailableProjects(
-        snapshot.docs
-          .map(doc => ({ id: doc.id, ...doc.data() }))
-          .filter(project => !project.clientId)
-      );
-    } catch (error) {
-      setError('Failed to load projects');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleLinkProjectsClick = (client) => {
-    setSelectedClient(client);
-    setIsClientModalOpen(true);
-    setSelectedProjects([]);
-    fetchAvailableProjects();
-  };
-
-  const handleProjectSelect = (projectId) => {
-    setSelectedProjects(prev =>
-      prev.includes(projectId)
-        ? prev.filter(id => id !== projectId)
-        : [...prev, projectId]
-    );
-  };
-
-  const handleLinkProjects = async () => {
-    try {
-      setLoading(true);
-      await Promise.all(selectedProjects.map(async (projectId) => {
-        const projectRef = doc(db, 'projects', projectId);
-        await updateDoc(projectRef, { clientIds: arrayUnion(selectedClient.id) });
-      }));
-      toast.success('Projects linked successfully!');
-      setIsClientModalOpen(false);
-      setSelectedClient(null);
-      setSelectedProjects([]);
-    } catch (error) {
-      toast.error('Failed to link projects');
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleSelectToLink = (projectId) => {
     setSelectedToLink(prev =>
       prev.includes(projectId)
@@ -204,41 +144,6 @@ const Clients = () => {
       toast.error('Failed to link projects');
     } finally {
       setIsLinking(false);
-    }
-  };
-
-  // Add project for client
-  const handleAddProject = async () => {
-    if (!newProjectName.trim()) return;
-    setIsCreatingProject(true);
-    try {
-      const projectData = {
-        name: newProjectName,
-        description: newProjectDesc,
-        clientIds: [selectedClient.id],
-        status: 'planning',
-        createdAt: serverTimestamp(),
-      };
-      await addDoc(collection(db, 'projects'), projectData);
-      toast.success('Project created and linked!');
-      setNewProjectName('');
-      setNewProjectDesc('');
-      setIsCreatingProject(false);
-      // Refresh projects for clients
-      const projectsRef = collection(db, 'projects');
-      const snapshot = await getDocs(projectsRef);
-      const allProjects = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      const map = {};
-      allProjects.forEach(project => {
-        if (project.clientIds && project.clientIds.includes(selectedClient.id)) {
-          if (!map[selectedClient.id]) map[selectedClient.id] = [];
-          map[selectedClient.id].push(project);
-        }
-      });
-      setProjectMap(map);
-    } catch (error) {
-      toast.error('Failed to create project');
-      setIsCreatingProject(false);
     }
   };
 

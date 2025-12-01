@@ -9,7 +9,6 @@ import {
   Target
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
-import { useFirebase } from '../contexts/FirebaseContext';
 import { toast } from 'react-hot-toast';
 import { format } from 'date-fns';
 import CompetitionModal from '../components/competitions/CompetitionModal';
