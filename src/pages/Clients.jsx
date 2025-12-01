@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Search, Filter, Building2, Mail, Phone, Calendar, MessageSquare } from 'lucide-react';
+import { Search, Building2, MessageSquare } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { useFirebase } from '../contexts/FirebaseContext';
 import { useAuth } from '../contexts/AuthContext';
-import { firebaseDb } from '../services/firebaseDb';
 import LoadingOverlay from '../components/ui/LoadingOverlay';
 import { collection, query, where, getDocs, doc, updateDoc, addDoc, serverTimestamp, arrayUnion } from 'firebase/firestore';
 import { db } from '../firebase/config';
@@ -23,8 +22,8 @@ const Clients = () => {
   const [availableProjects, setAvailableProjects] = useState([]);
   const [selectedProjects, setSelectedProjects] = useState([]);
   const [projectMap, setProjectMap] = useState({});
-  const [chatClient, setChatClient] = useState(null);
-  const [isChatModalOpen, setIsChatModalOpen] = useState(false);
+  const [chatClient] = useState(null);
+  const [isChatModalOpen] = useState(false);
   const [newProjectName, setNewProjectName] = useState('');
   const [newProjectDesc, setNewProjectDesc] = useState('');
   const [isCreatingProject, setIsCreatingProject] = useState(false);

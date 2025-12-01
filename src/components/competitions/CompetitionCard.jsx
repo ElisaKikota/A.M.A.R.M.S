@@ -5,9 +5,7 @@ import {
   DollarSign, 
   Building, 
   Edit, 
-  Plus,
-  Clock,
-  Users
+  Plus
 } from 'lucide-react';
 import { format } from 'date-fns';
 

@@ -176,11 +176,28 @@ export const FirebaseProvider = ({ children }) => {
   // Reset password
   const resetPassword = async (email) => {
     try {
-      await sendPasswordResetEmail(auth, email);
-      toast.success('Password reset email sent');
+      // Use official deployed app URL so the link in the email is correct
+      const actionCodeSettings = {
+        url: 'https://amarms.netlify.app/login',
+        handleCodeInApp: false
+      };
+
+      await sendPasswordResetEmail(auth, email, actionCodeSettings);
+      toast.success('Password reset email sent. Please check your inbox.');
     } catch (error) {
       console.error('Password reset error:', error);
-      toast.error(error.message);
+
+      if (error.code === 'auth/user-not-found') {
+        // Do not reveal that the email doesn't exist – generic message instead
+        toast.success('Password reset email sent. Please check your inbox.');
+      } else if (error.code === 'auth/invalid-email') {
+        toast.error('Please enter a valid email address');
+      } else if (error.code === 'auth/too-many-requests') {
+        toast.error('Too many requests. Please try again later');
+      } else {
+        toast.error(error.message || 'Failed to send password reset email');
+      }
+
       throw error;
     }
   };

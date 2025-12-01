@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { Mail, Lock, AlertCircle } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { useFirebase } from '../contexts/FirebaseContext';
 import { useActivityLog } from '../contexts/ActivityLogContext';
 import { toast } from 'react-hot-toast';
 
@@ -10,7 +11,9 @@ const Login = () => {
   const location = useLocation();
   const { login } = useAuth();
   const { logUserSessionActivity } = useActivityLog();
+  const { resetPassword } = useFirebase();
   const [loading, setLoading] = useState(false);
+  const [resetLoading, setResetLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showApprovalDialog, setShowApprovalDialog] = useState(false);
@@ -66,6 +69,24 @@ const Login = () => {
       }
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleForgotPassword = async () => {
+    if (!email) {
+      toast.error('Please enter your email address first');
+      return;
+    }
+
+    if (resetLoading) return;
+
+    try {
+      setResetLoading(true);
+      await resetPassword(email);
+    } catch (error) {
+      // Errors and toasts are handled inside resetPassword
+    } finally {
+      setResetLoading(false);
     }
   };
 
@@ -148,8 +169,19 @@ const Login = () => {
               </div>
             </div>
           </div>
+          
+          <div className="flex items-center justify-between mt-4">
+            <button
+              type="button"
+              onClick={handleForgotPassword}
+              disabled={resetLoading}
+              className="text-sm font-medium text-blue-600 hover:text-blue-500 disabled:opacity-50"
+            >
+              {resetLoading ? 'Sending reset email...' : 'Forgot your password?'}
+            </button>
+          </div>
 
-          <div>
+          <div className="mt-4">
             <button
               type="submit"
               disabled={loading}

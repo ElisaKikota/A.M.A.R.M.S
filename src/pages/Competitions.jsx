@@ -2,15 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { 
   Trophy, 
   Plus, 
-  Calendar, 
-  DollarSign, 
   TrendingUp, 
   Clock,
-  Filter,
   Search,
-  Award,
   FileText,
-  Users,
   Target
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
@@ -29,7 +24,6 @@ import {
 
 const Competitions = () => {
   const { hasPermission } = useAuth();
-  const { user } = useFirebase();
   
   const [competitions, setCompetitions] = useState([]);
   const [applications, setApplications] = useState([]);
@@ -129,18 +123,6 @@ const Competitions = () => {
       case 'awarded': return 'bg-blue-100 text-blue-800';
       default: return 'bg-gray-100 text-gray-800';
     }
-  };
-
-  const getDeadlineStatus = (deadline) => {
-    if (!deadline) return { status: 'N/A', color: 'text-gray-600' };
-    const now = new Date();
-    const deadlineDate = deadline.toDate ? deadline.toDate() : new Date(deadline);
-    const daysLeft = Math.ceil((deadlineDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
-    
-    if (daysLeft < 0) return { status: 'overdue', color: 'text-red-600' };
-    if (daysLeft <= 7) return { status: 'urgent', color: 'text-orange-600' };
-    if (daysLeft <= 30) return { status: 'soon', color: 'text-yellow-600' };
-    return { status: 'ok', color: 'text-green-600' };
   };
 
   if (loading) {
