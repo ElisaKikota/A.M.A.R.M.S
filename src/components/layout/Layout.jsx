@@ -143,7 +143,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
 
   return (
     <div 
-      className={`fixed left-0 top-16 h-[calc(100vh-4rem)] bg-gray-900 text-white transition-all duration-300
+      className={`fixed left-0 top-16 h-[calc(100vh-4rem)] bg-gray-900 text-white transition-all duration-300 overflow-y-auto
         ${isCollapsed ? 'w-20' : 'w-64'}`}
     >
       <nav className="space-y-2 px-2 py-4">
